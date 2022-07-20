@@ -6,7 +6,7 @@
 // I don't want to do 'use namespace std' here as I feel it would pollute global namespace hence not a good practice
 /*
 * This method prints the elments in the vector
-* in: integers - vector to print elments of, note the we receive back reference to avoid a copy operation
+* in: integers - vector to print elments of, note the we receive reference to avoid a copy operation
 * returns: nothing
 */
 void print(const std::vector<int> &integers)
@@ -135,7 +135,6 @@ void pushToFront(std::vector<int>& integers)
 * in: nothing
 & returns: returns implicit zero
 */
-//
 int main() 
 {
     std::vector<int> integers;

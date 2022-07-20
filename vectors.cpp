@@ -11,7 +11,7 @@
 */
 void print(const std::vector<int> &integers)
 {
-    std:: cout << "vector contains: {\t";
+    std:: cout << "\nvector contains: {\t";
     for(const int &index : integers)
     {
         std:: cout << index << '\t';
@@ -27,7 +27,7 @@ void print(const std::vector<int> &integers)
 */
 void pushToBack(std::vector<int>& integers)
 {
-    std:: cout << "Pushing back ...\n";
+    std:: cout << "\nPushing back ...\n";
     int input = 0;
     while(input >= 0)
     {
@@ -43,13 +43,79 @@ void pushToBack(std::vector<int>& integers)
 
 
 /*
+* This method inserts a value at the index of the vector
+* in: integers - vector to push the elements to
+* returns: nothing
+*/
+void insertAtAnIndex(std::vector<int>& integers)
+{
+    std:: cout << "\nInserting at an index ...\n";
+    int index = 0;
+    while(index >= 0)
+    {
+        std::cout << std::endl;
+        std::cout << "Enter an index: ";
+        std::cin >> index; //get an index to insert at from the user
+        if(index>= 0) // insert only if the index is greater than or equal to zero
+        {
+            int value = 0;
+            std::cout << "Enter a value greater than or equal to zero to insert at the index: ";
+            std::cin >> value;
+            if(value >= 0)
+            {
+                integers.insert(integers.begin() + index, value); //Note that to insert()'s first argument you need to pass an iterator, if you pass just an int it won't compile, hence we are passing integers.begin() + index. Another observation is insertion isn't replacement, after insertion at the index, the previous value there is moved to the right and so are the elements at the right.
+            }
+            else
+            {
+                std:: cout << "You entered a negative value! \n";
+                break;
+            }
+        }
+    }
+}
+
+
+/*
+* This method replaces a value at an index of the vector
+* in: integers - vector to push the elements to
+* returns: nothing
+*/
+void replaceAtAnIndex(std::vector<int>& integers)
+{
+    std::cout << "\nReplacing the value at an index ...\n";
+    int index = 0;
+    while(index >= 0)
+    {
+        std::cout << std::endl;
+        std::cout << "Enter an index: ";
+        std::cin >> index; //get an index to replace the value at from the user
+        if(index>= 0) // Replace only if the index is greater than or equal to zero
+        {
+            int value = 0;
+            std::cout << "Enter a value greater than or equal to zero to replace at the index: ";
+            std::cin >> value;
+            if(value >= 0)
+            {
+                integers.at((unsigned int)index) = value; 
+            }
+            else
+            {
+                std:: cout << "You entered a negative value! \n";
+                break;
+            }
+        }
+    }
+}
+
+
+/*
 * This method pushes the input elements to back of the vector
 * in: integers - vector to push the elements to
 * returns: nothing
 */
 void pushToFront(std::vector<int>& integers)
 {
-    std:: cout << "Pushing front ...\n";
+    std:: cout << "\nPushing front ...\n";
     int input = 0;
     while(input >= 0)
     {
@@ -77,5 +143,9 @@ int main()
     pushToBack(integers);
     print(integers);
     pushToFront(integers);
+    print(integers);
+    insertAtAnIndex(integers);
+    print(integers);
+    replaceAtAnIndex(integers);
     print(integers);
 }

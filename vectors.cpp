@@ -6,7 +6,7 @@
 // I don't want to do 'use namespace std' here as I feel it would pollute global namespace hence not a good practice
 /*
 * This method prints the elments in the vector
-* in: integers - vector to print elments of
+* in: integers - vector to print elments of, note the we receive back reference to avoid a copy operation
 * returns: nothing
 */
 void print(const std::vector<int> &integers)
@@ -18,12 +18,17 @@ void print(const std::vector<int> &integers)
     }
     std::cout << "}" << std::endl;
 }
-//program's starting point
-int main() 
+
+
+/*
+* This method pushes the input elements to back of the vector
+* in: integers - vector to push the elements to
+* returns: nothing
+*/
+void pushToBack(std::vector<int>& integers)
 {
-    std::vector<int> integers;
+    std:: cout << "Pushing back ...\n";
     int input = 0;
-    std::cout << "vector operations: \n";
     while(input >= 0)
     {
         std::cout << std::endl;
@@ -34,5 +39,43 @@ int main()
             integers.push_back(input); // insert only positive integers to the vector
         }
     }
+}
+
+
+/*
+* This method pushes the input elements to back of the vector
+* in: integers - vector to push the elements to
+* returns: nothing
+*/
+void pushToFront(std::vector<int>& integers)
+{
+    std:: cout << "Pushing front ...\n";
+    int input = 0;
+    while(input >= 0)
+    {
+        std::cout << std::endl;
+        std::cout << "Enter a positive integer to store: ";
+        std::cin >> input; //get an integer from user
+        if(input >= 0) // keep getting the inputs from the user till he/she enters positive numbers or zero
+        {
+            integers.insert(integers.begin(), input); // Note that we don't have push_front(), so instead we call insert() and mention where
+        }
+    }
+}
+
+
+/*
+* starting point of the program
+* in: nothing
+& returns: returns implicit zero
+*/
+//
+int main() 
+{
+    std::vector<int> integers;
+    std::cout << "vector operations: \n";
+    pushToBack(integers);
+    print(integers);
+    pushToFront(integers);
     print(integers);
 }

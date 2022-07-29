@@ -2,12 +2,17 @@
 * This program is part of the exercise of the course on STL that I am doing. This basically teaches about common things across containers that we can do
 * - despite the implementation differences.
 */
+//Need to disable warning 4668 that comes for standard library headers
+#pragma warning (push)
+#pragma warning (disable:4668)
 #include <iostream> //ofcourse for std::cout and std::cin, without it most of the C++ code is incomplete right?
 #include <fstream> //for std::ifstream since we need to read data from a text file
 #include <list> //for std::list
 #include <vector> //for std::vector
 #include <string> //since we would be storing names and genders of the guests in a string
 //We need class for better representation of data that primitive types or struct, I know struct vs class difference is only in default access specifier in C++ but I would still prefer class over struct for intent.
+#include <iterator>
+#pragma warning (pop) //restore the warning level back to last push
 #define USE_LIST
 
 
@@ -105,6 +110,46 @@ void printGuests(Container &guests)
 }
 
 
+
+/*
+* This function prints the guest's data by index
+* input: 
+        guests: Container of guests
+        index: the index of the Guest to be printed
+* returns: nothing
+*/
+void printGuest(Container &guests, int index)
+{
+    if(static_cast<unsigned int>(index) >= guests.size())
+    {
+        std::cout << "Index out of bounds" << std::endl;
+        return; 
+    }
+    
+    #if defined(USE_VECTOR)
+    //Note that if USE_LIST is defined, then you would get an error saying at is not a member of std::list as expected, since std::list doesn't allow
+    //random access, so in that case I would want to traverse through the list to the index and print the values
+        std::cout << "\n-----guest at index " << index << "-------\n";
+        std::cout << guests.at(index).getName() << std::endl;
+        std::cout << guests.at(index).getGender() << std::endl;
+        std::cout << guests.at(index).getAge() << std::endl;
+        std:: cout << "---------------------------------\n";
+    #elif defined(USE_LIST)
+        std::cout << "\n-----guest at index " << index << "-------\n";
+        Container::iterator it = guests.begin();
+        
+        while(index)
+        {   it++;
+            index--;
+        }
+        std::cout << it->getName() << std::endl;
+        std::cout << it->getGender() << std::endl;
+        std::cout << it->getAge() << std::endl;
+        std:: cout << "---------------------------------\n";
+    #endif
+    
+}
+
 /*
 * From this is where the execution starts
 * input: nothing
@@ -115,5 +160,13 @@ int main()
     Container guests;
     populateGuests(guests);
     printGuests(guests);
-    
+    int index = 0;
+    while(index >= 0)
+    {
+        std::cout << "Enter the index of the guest you want to see in particular:\t";
+        std::cin >> index;
+        if(index >= 0)
+            printGuest(guests, index);    
+    }
+    std::cout << "You entered negative index" << std::endl;
 }

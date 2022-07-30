@@ -13,7 +13,7 @@
 //We need class for better representation of data that primitive types or struct, I know struct vs class difference is only in default access specifier in C++ but I would still prefer class over struct for intent.
 #include <iterator>
 #pragma warning (pop) //restore the warning level back to last push
-#define USE_LIST
+#define USE_VECTOR
 
 
 /* Represets a Guest of the Birth day party*/
@@ -59,7 +59,6 @@ private:
     std::string gender;
     int age;
 };
-
 
 
 #if defined(USE_VECTOR)
@@ -110,29 +109,28 @@ void printGuests(Container &guests)
 }
 
 
-
 /*
 * This function prints the guest's data by index
 * input: 
-        guests: Container of guests
-        index: the index of the Guest to be printed
-* returns: nothing
+*       guests: Container of guests
+*       index: the index of the Guest to be printed
+* returns: true on successful print
 */
-void printGuest(Container &guests, int index)
+bool printGuestByIndex(Container &guests, int index)
 {
-    if(static_cast<unsigned int>(index) >= guests.size())
+    if((index < 0) || (static_cast<unsigned int>(index) >= guests.size()))
     {
         std::cout << "Index out of bounds" << std::endl;
-        return; 
+        return false; 
     }
     
     #if defined(USE_VECTOR)
     //Note that if USE_LIST is defined, then you would get an error saying at is not a member of std::list as expected, since std::list doesn't allow
     //random access, so in that case I would want to traverse through the list to the index and print the values
         std::cout << "\n-----guest at index " << index << "-------\n";
-        std::cout << guests.at(index).getName() << std::endl;
-        std::cout << guests.at(index).getGender() << std::endl;
-        std::cout << guests.at(index).getAge() << std::endl;
+        std::cout << guests.at(static_cast<unsigned int>(index)).getName() << std::endl;
+        std::cout << guests.at(static_cast<unsigned int>(index)).getGender() << std::endl;
+        std::cout << guests.at(static_cast<unsigned int>(index)).getAge() << std::endl;
         std:: cout << "---------------------------------\n";
     #elif defined(USE_LIST)
         std::cout << "\n-----guest at index " << index << "-------\n";
@@ -148,7 +146,32 @@ void printGuest(Container &guests, int index)
         std:: cout << "---------------------------------\n";
     #endif
     
+    return true;
 }
+
+
+/*
+* This function prints the guest's data by index
+* input: guests: Container of guests
+         index: the index of the Guest to be printed
+* returns: nothing
+*/
+bool removeGuestByIndex(Container &guests, int index)
+{
+    if((index < 0) || static_cast<unsigned int>(index) >= guests.size())
+    {
+         std::cout << "Index out of bounds" << std::endl;
+         return false;
+    }
+    #if defined(USE_VECTOR)
+        guests.erase(guests.begin() + index); // note that this doesn't work on std::list as it doesn't provide random access. However std::next() works on vectors but that seems inefficient since you have random access available for vectors, you can just use it 
+    #elif defined (USE_LIST)
+        guests.erase(std::next(guests.begin(), index)); // This wraps std:advance() which does operator++ on iterator index times
+    #endif
+    
+    return true;
+}
+
 
 /*
 * From this is where the execution starts
@@ -160,13 +183,31 @@ int main()
     Container guests;
     populateGuests(guests);
     printGuests(guests);
+
     int index = 0;
-    while(index >= 0)
+    while(true)
     {
         std::cout << "Enter the index of the guest you want to see in particular:\t";
         std::cin >> index;
-        if(index >= 0)
-            printGuest(guests, index);    
+        if(printGuestByIndex(guests, index) == false)
+            break;    
     }
-    std::cout << "You entered negative index" << std::endl;
+    std::cout << "You entered invalid index" << std::endl;
+    
+    while(true)
+    {
+        std::cout << "Enter the index of the guest you want to remove from the guest list:\t";
+        std::cin >> index;
+        if(removeGuestByIndex(guests, index) == false)
+        {
+            break;
+        }
+        else 
+        {
+            std::cout << "Guest list after deletion: " << std::endl;
+            printGuests(guests);
+            std::cout << std::endl;
+        }
+    }
+    std::cout << "You entered invalid index" << std::endl;
 }

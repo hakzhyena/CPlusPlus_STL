@@ -13,7 +13,7 @@
 //We need class for better representation of data that primitive types or struct, I know struct vs class difference is only in default access specifier in C++ but I would still prefer class over struct for intent.
 #include <iterator>
 #pragma warning (pop) //restore the warning level back to last push
-#define USE_VECTOR
+#define USE_LIST
 
 
 /* Represets a Guest of the Birth day party*/
@@ -61,11 +61,22 @@ private:
 };
 
 
-#if defined(USE_VECTOR)
-    typedef std::vector<Guest> Container;
-#elif defined(USE_LIST)
-    typedef std::list<Guest> Container;
-#endif
+class Container
+{
+    public:
+    void populateGuests();
+    void printGuests();
+    bool printGuestByIndex(int index);
+    bool removeGuestByIndex(int index);
+    float calculateAverageAge();
+    private:
+    #if defined(USE_VECTOR)
+        typedef std::vector<Guest> Guests;
+    #elif defined(USE_LIST)
+        typedef std::list<Guest> Guests;
+    #endif
+    Guests guests;
+};
 
 
 /*
@@ -73,7 +84,7 @@ private:
 * input: guests - container that should hold all the guests in memory
 * returns: nothing
 */
-void populateGuests(Container &guests)
+void Container::populateGuests()
 {
     std::ifstream guestsData("Guests.txt");
     std::string line;
@@ -96,7 +107,7 @@ void populateGuests(Container &guests)
 * input: guests - container that holds all the guests in memory
 * returns: nothing
 */
-void printGuests(Container &guests)
+void Container::printGuests()
 {
     for(auto guest: guests)
     {
@@ -116,7 +127,7 @@ void printGuests(Container &guests)
 *       index: the index of the Guest to be printed
 * returns: true on successful print
 */
-bool printGuestByIndex(Container &guests, int index)
+bool Container::printGuestByIndex(int index)
 {
     if((index < 0) || (static_cast<unsigned int>(index) >= guests.size()))
     {
@@ -134,12 +145,13 @@ bool printGuestByIndex(Container &guests, int index)
         std:: cout << "---------------------------------\n";
     #elif defined(USE_LIST)
         std::cout << "\n-----guest at index " << index << "-------\n";
-        Container::iterator it = guests.begin();
         
-        while(index)
-        {   it++;
-            index--;
-        }
+        Guests::iterator it = std::next(guests.begin(), index);
+        
+        // while(index)
+        // {   it++;
+            // index--;
+        // }
         std::cout << it->getName() << std::endl;
         std::cout << it->getGender() << std::endl;
         std::cout << it->getAge() << std::endl;
@@ -156,7 +168,7 @@ bool printGuestByIndex(Container &guests, int index)
          index: the index of the Guest to be printed
 * returns: nothing
 */
-bool removeGuestByIndex(Container &guests, int index)
+bool Container::removeGuestByIndex(int index)
 {
     if((index < 0) || static_cast<unsigned int>(index) >= guests.size())
     {
@@ -174,22 +186,37 @@ bool removeGuestByIndex(Container &guests, int index)
 
 
 /*
+* This method calculates the average age of guests
+*input: guests
+*/
+float Container::calculateAverageAge()
+{
+    float output = 0.0f, number = 0.0f;
+    for(auto &guest : guests)
+    {
+        output += static_cast<float>(guest.getAge());
+        number++;
+    }    
+    return output / number;
+}
+
+/*
 * From this is where the execution starts
 * input: nothing
 * return: an implicit int 0
 */
 int main()
 {
-    Container guests;
-    populateGuests(guests);
-    printGuests(guests);
+    Container guestsContainer;
+    guestsContainer.populateGuests();
+    guestsContainer.printGuests();
 
     int index = 0;
     while(true)
     {
         std::cout << "Enter the index of the guest you want to see in particular:\t";
         std::cin >> index;
-        if(printGuestByIndex(guests, index) == false)
+        if(guestsContainer.printGuestByIndex(index) == false)
             break;    
     }
     std::cout << "You entered invalid index" << std::endl;
@@ -198,16 +225,18 @@ int main()
     {
         std::cout << "Enter the index of the guest you want to remove from the guest list:\t";
         std::cin >> index;
-        if(removeGuestByIndex(guests, index) == false)
+        if(guestsContainer.removeGuestByIndex(index) == false)
         {
             break;
         }
         else 
         {
             std::cout << "Guest list after deletion: " << std::endl;
-            printGuests(guests);
+            guestsContainer.printGuests();
             std::cout << std::endl;
         }
     }
     std::cout << "You entered invalid index" << std::endl;
+    
+    std::cout << "Average age of guests is: " << guestsContainer.calculateAverageAge() << std::endl;
 }

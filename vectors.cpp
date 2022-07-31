@@ -1,6 +1,8 @@
 /*
-* This program demonstrates std::vector
+* Program demonstrating operations on std::vector
 */
+
+
 #include <iostream> //for cout and cin
 #include <vector> //for vector ofcourse!
 // I don't want to do 'use namespace std' here as I feel it would pollute global namespace hence not a good practice
